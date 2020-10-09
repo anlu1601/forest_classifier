@@ -1,1 +1,0 @@
-{"trees": [{"tree_name": "tree_10", "x_min": 2631, "x_max": 2792, "y_min": 2288, "y_max": 2428, "score": 0.51}, {"tree_name": "tree_11", "x_min": 3818, "x_max": 3960, "y_min": 1859, "y_max": 1986, "score": 0.5}]}
