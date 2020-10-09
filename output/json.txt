@@ -1,0 +1,1 @@
+{"image": "DJI_0001.JPG", "latitude": (59.0, 32.0, 38.3988), "longitude": (12.0, 30.0, 11.8608), "altitude": 302.323, "trees": [{"tree_name": "tree_0", "x_min": 4973, "x_max": 5321, "y_min": 3374, "y_max": 3648, "accuracy": 0.62}]}
