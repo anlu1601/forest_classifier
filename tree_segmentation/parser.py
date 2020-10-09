@@ -1,14 +1,13 @@
 import json
 import csv
 import os
-
-from tree_segmentation import paths
-
+from deepforest import get_data
 
 # Made to be used with https://www.robots.ox.ac.uk/~vgg/software/via/via.html
 # Simply mask all the trees in a picture with rectangles and save it as json.
 # Use that json-file as input to this method and it will create a csv-file with the right
 # format for training in this library.
+
 
 def read_and_parse_json(json_file: os.path, save_folder: os.path) -> os.path:
     """
@@ -17,7 +16,7 @@ def read_and_parse_json(json_file: os.path, save_folder: os.path) -> os.path:
     @param json_file: Text file containing json.
     @return: Path to csv file - None if IO-error.
     """
-    json_file = os.path.join(paths.DATA_DIR, json_file)
+    json_file = get_data(json_file)
 
     file = open(json_file)
     json_dict = json.load(file)
