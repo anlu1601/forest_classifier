@@ -152,20 +152,50 @@ def get_nearest_neighbor_and_similarity(preds, K,MasterImage,saveFile):
     return similarities, nearest_neighbors
 
         
-#NOT CURRENTLY WORKING (Supposed to show similar images)        
-def get_similar_images(similarities, nearest_neighbors, images1):
-    j = 0
-    cnt=0
-    for i in nearest_neighbors:
-        cnt+=1
-        #show_img(images1[i])
-        #plt.imshow(images1[i])
-        #plt.show()
-        #img.show(images1[i])
-        #print (j)
-        #if (similarities[j]<0.8):
-        #print (similarities[j])
-           # print (j)
+def get_areaFromEquation(Xcoord,Ycoord,coordID,K,M):#in Y > KX + M
+    area=[]
+    _Xsolve=[]
+    _Ysolve=[]
+    j=0
+    for i in coordID:
+        eq=0
+        eq = Xcoord[j]*K
+        eq += M
+        
+        if Ycoord[j] > eq:
+            area.append(coordID[j])
+            _Xsolve.append(Xcoord[j])
+            _Ysolve.append(Ycoord[j])
         j+=1
-    #print (cnt)
+    return area,_Xsolve,_Ysolve
+def get_areaFromLimit(Xarr,Yarr,CoordID,Xmin,Xmax,Ymin,Ymax):
+    area=[]
+    _Xsolve=[]
+    _Ysolve=[]
+    j=0
+    for i in X:
 
+        if Xmin < X[j] and Xmax > X[j]and Ymin < Y[j] and Ymax > Y[j]:
+            #print ("X",simil4[j],", Y", simil3[j],", #", neigh[j])
+            area.append(CoordID[j])
+            _Xsolve.append(Xcoord[j])
+            _Ysolve.append(Ycoord[j])
+        j+=1
+    return area
+ 
+def plot_simpleGraph(X,Y):
+    plt.plot(X, Y,"r.") 
+#Send in the X and Y coords, the image array corresponding to the coordinates and specify icon size.
+def plot_imagecluster(X,Y,Img_arr, icon_size)
+    graphsize = (40,40)
+    
+    fig, ax = plt.subplots(figsize=graphsize, dpi=100)
+    ax.scatter(X, Y) 
+
+    for filename in os.listdir(folder):
+        _im = OffsetImage(plt.imread(os.path.join(folder,filename)),zoom=icon_size)
+        _images.append(_im)
+
+    for X, Y, Img_arr in zip(X, Y,Img_arr):
+        ab = AnnotationBbox(Img_arr, (X, Y), frameon=False)
+        ax.add_artist(ab)
