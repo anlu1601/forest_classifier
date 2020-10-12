@@ -13,7 +13,8 @@ def get_trees_from_random_forest():
     ran = rand.randint(0, len(dirlist)-1)
     #print(dirlist[ran])
     random_forest = dirlist[ran]
-
+    #random_forest = 'DJI_0001'    
+        
     sub_images_json = './images_and_json/' + random_forest
     path_forest = './forests/' + random_forest + '.jpg'
     #print(path_forest)

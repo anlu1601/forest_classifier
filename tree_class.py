@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import glob
 import math
+import reverse_geocode
 
 class tree_data:
     def __init__(self, data):
@@ -126,3 +127,25 @@ class tree_data:
             print("Succesfully deleted " + img_name)
         except:
             print("Error, failed to delete " + img_name)
+            
+    def dms_to_dd(self, d, m, s):
+        dd = d + float(m)/60 + float(s)/3600
+        return dd
+    
+    
+    def show_location(self):
+        lat = self.data['latitude']
+        long = self.data['longitude']
+        
+        try:
+            latt = self.dms_to_dd(lat[0],lat[1],lat[2])
+            longg = self.dms_to_dd(long[0],long[1],long[2])
+
+            #print(latt, longg)
+            coordinates = (latt, longg)
+            location = reverse_geocode.get(coordinates)
+        except:
+            print("Can't determine location")
+            return
+        else:
+            print("This forest is near " + location['city'] + " in " + location['country'])
