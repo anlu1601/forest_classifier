@@ -186,7 +186,7 @@ def get_areaFromLimit(Xarr,Yarr,CoordID,Xmin,Xmax,Ymin,Ymax):
 def plot_simpleGraph(X,Y):
     plt.plot(X, Y,"r.") 
 #Send in the X and Y coords, the image array corresponding to the coordinates and specify icon size.
-def plot_imagecluster(X,Y,Img_arr, icon_size)
+def plot_imagecluster(X,Y,Img_arr, icon_size):
     graphsize = (40,40)
     
     fig, ax = plt.subplots(figsize=graphsize, dpi=100)
