@@ -12,105 +12,35 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import plot_model,np_utils
 from keras import regularizers
 import keras.metrics as metric
+import matplotlib
+matplotlib.use('Agg')
+from PIL import Image
+import numpy as np
 import os
+import cv2
 
 # Global Constants
-NB_CLASS = 2
-LEARNING_RATE = 0.01
-MOMENTUM = 0.9
-ALPHA = 0.0001
-BETA = 0.75
-GAMMA = 0.1
-DROPOUT = 0.4
-WEIGHT_DECAY = 0.0005
-LRN2D_NORM = True
-DATA_FORMAT = 'channels_last' # Theano:'channels_first' Tensorflow:'channels_last'
-USE_BN = True
-IM_WIDTH = 224
-IM_HEIGHT = 224
-EPOCH = 10 #50
-
-train_root = 'after_divide_dataset/train/'
-validation_root = 'after_divide_dataset/val/'
-test_root = 'after_divide_dataset/test/'
-IM_WIDTH = 224
-IM_HEIGHT = 224
+LRN2D_NORM = True #default
+EPOCH = 10
 batch_size = 32
+IM_WIDTH = 224 
+IM_HEIGHT = 224
+WEIGHT_DECAY = 0.0005
+DATA_FORMAT = 'channels_last' # Theano:'channels_first' Tensorflow:'channels_last'
+DROPOUT = 0.4
+NB_CLASS = 2
+    
 
 
-# In[7]:
+# In[2]:
 
 
-
-# train data
-train_datagen = ImageDataGenerator(
-    rotation_range = 30,
-    width_shift_range = 0.2,
-    height_shift_range = 0.2,
-    shear_range = 0.2,
-    zoom_range = 0.2,
-    horizontal_flip = True,
-    featurewise_center = False
-    # featurewise_center: 3 channels of the original image value-the mean value of the 3 channels of the original image value
-)
-train_generator = train_datagen.flow_from_directory(
-    train_root,
-    target_size=(IM_WIDTH, IM_HEIGHT),
-    batch_size = batch_size,
-)
-
-# valid data
-valid_datagen = ImageDataGenerator(
-    rotation_range = 30,
-    width_shift_range = 0.2,
-    height_shift_range = 0.2,
-    shear_range = 0.2,
-    zoom_range = 0.2,
-    horizontal_flip = True,
-    featurewise_center = False
-)
-valid_generator = train_datagen.flow_from_directory(
-    validation_root,
-    target_size = (IM_WIDTH, IM_HEIGHT),
-    batch_size = batch_size,
-)
-
-#test data
-test_datagen = ImageDataGenerator(
-    rotation_range = 30,
-    width_shift_range=0.2,
-    height_shift_range=0.2,
-    shear_range = 0.2,
-    zoom_range = 0.2,
-    horizontal_flip=True,
-    featurewise_center=False
-)
-test_generator = train_datagen.flow_from_directory(
-    test_root,
-    target_size=(IM_WIDTH, IM_HEIGHT),
-    batch_size = batch_size,
-)
-# Function: flow_from_directory(classes), classes is optional sub-category list (for example ['dogs','cats']). 
-# Each subdirectory will be treated as a different class (the class name will be lexicographically
-# mapped to the index of the label).The dictionary containing the mapping from class name to class
-# index can be obtained through the class_indices attribute.
-print(test_generator.n)
-print("train",train_generator.class_indices)
-print("valid",valid_generator.class_indices)
-print("test",test_generator.class_indices)
-
-
-# In[ ]:
-
-
-
-#normalization
 def conv2D_lrn2d(x, filters, kernel_size, strides=(1,1), padding='same', 
                  data_format=DATA_FORMAT, dilation_rate=(1,1) ,activation='relu',
                  use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zero',
                  kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None,
                  kernel_constraint=None, bias_constraint=None, lrn2d_norm=LRN2D_NORM, 
-                 weight_decay=WEIGHT_DECAY):
+                 weight_decay=WEIGHT_DECAY):   
     #l2 normalization
     if weight_decay:
         kernel_regularizer = regularizers.l2(weight_decay)
@@ -118,7 +48,6 @@ def conv2D_lrn2d(x, filters, kernel_size, strides=(1,1), padding='same',
     else:
         kernel_regularizer = None
         bias_regularizer = None
-
         X = Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding, 
                  data_format=data_format, dilation_rate = dilation_rate, activation=activation,
                  use_bias=use_bias, kernel_initializer=kernel_initializer, 
@@ -126,15 +55,14 @@ def conv2D_lrn2d(x, filters, kernel_size, strides=(1,1), padding='same',
                  bias_regularizer=bias_regularizer,activity_regularizer=activity_regularizer,
                  kernel_constraint=kernel_constraint, bias_constraint=bias_constraint,
                  )(x)
-  
+
     if lrn2d_norm:
         #batch normalization
         x=BatchNormalization()(x)
-
     return x
 
 
-# In[ ]:
+# In[3]:
 
 
 def inception_module(x,params,concat_axis,padding='same',data_format=DATA_FORMAT,
@@ -197,11 +125,10 @@ def inception_module(x,params,concat_axis,padding='same',data_format=DATA_FORMAT
     return concatenate([pathway1,pathway2,pathway3,pathway4],axis=concat_axis)
 
 
-# In[ ]:
+# In[4]:
 
 
-def create_model():
-    #Data format:tensorflow,channels_last;theano,channels_last
+def build_model():      
     if DATA_FORMAT=='channels_first':
         INP_SHAPE=(3,224,224)
         img_input=Input(shape=INP_SHAPE)
@@ -247,15 +174,11 @@ def create_model():
     return x,img_input,CONCAT_AXIS,INP_SHAPE,DATA_FORMAT
 
 
-# In[ ]:
+# In[5]:
 
 
-def check_print():
-    # Create the Model
-    x,img_input,CONCAT_AXIS,INP_SHAPE,DATA_FORMAT=create_model()
-
-    # Create a Keras Model
-    # model=Model(input=img_input,output=[x])
+def create_model():
+    x,img_input,CONCAT_AXIS,INP_SHAPE,DATA_FORMAT=build_model()
     model=Model(img_input,[x])
     model.summary()
 
@@ -267,27 +190,112 @@ def check_print():
     return model
 
 
-# In[ ]:
+# In[6]:
 
 
-if __name__=='__main__':
-    if os.path.exists('inception_1.h5'):
-        model=load_model('inception_1.h5')
-    else:
-        model=check_print()
+def train_model(_model, train_root, validation_root, test_root):
+    # train data
+    train_datagen = ImageDataGenerator(
+        rotation_range = 30,
+        width_shift_range = 0.2,
+        height_shift_range = 0.2,
+        shear_range = 0.2,
+        zoom_range = 0.2,
+        horizontal_flip = True,
+        featurewise_center = False
+        # featurewise_center: 3 channels of the original image value-the mean value of the 3 channels of the original image value
+    )
+    train_generator = train_datagen.flow_from_directory(
+        train_root,
+        target_size=(IM_WIDTH, IM_HEIGHT),
+        batch_size = batch_size,
+    )
 
-    
-    model.fit(train_generator,vali dation_data=valid_generator,epochs=EPOCH,
-                        steps_per_epoch=train_generator.n/batch_size
-                        ,validation_steps=valid_generator.n/batch_size)
-#     model.fit(train_generator,epochs=EPOCH,
-#                     steps_per_epoch=train_generator.n/batch_size
-#                     )
-    model.save('inception_1.h5')
-    model.METRICS=['acc',metric.top_k_categorical_accuracy]
-    # loss,acc,top_acc=model.evaluate_generator(test_generator,steps=test_generator.n/batch_size)
-    loss,acc,top_acc=model.evaluate(test_generator,steps=test_generator.n/batch_size)
+    # valid data
+    valid_datagen = ImageDataGenerator(
+        rotation_range = 30,
+        width_shift_range = 0.2,
+        height_shift_range = 0.2,
+        shear_range = 0.2,
+        zoom_range = 0.2,
+        horizontal_flip = True,
+        featurewise_center = False
+    )
+    valid_generator = train_datagen.flow_from_directory(
+        validation_root,
+        target_size = (IM_WIDTH, IM_HEIGHT),
+        batch_size = batch_size,
+    )
+
+    #test data
+    test_datagen = ImageDataGenerator(
+        rotation_range = 30,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        shear_range = 0.2,
+        zoom_range = 0.2,
+        horizontal_flip=True,
+        featurewise_center=False
+    )
+    test_generator = train_datagen.flow_from_directory(
+        test_root,
+        target_size=(IM_WIDTH, IM_HEIGHT),
+        batch_size = batch_size,
+    )
+
+    _model.fit(train_generator,validation_data=valid_generator,epochs=EPOCH,
+                        steps_per_epoch=train_generator.n/batch_size,
+                       validation_steps=valid_generator.n/batch_size)
+#     _model.save('inception_2.h5')
+    _model.save(_model)
+    _model.METRICS=['acc',metric.top_k_categorical_accuracy]
+    loss,acc,top_acc=_model.evaluate(test_generator,steps=test_generator.n/batch_size)
     print('Test result:loss:%f,acc:%f,top_acc:%f'%(loss,acc,top_acc))
+    return _model
+
+
+# In[7]:
+
+
+def predict(_folder,_model):
+    #load model.h5 document
+    model = load_model(_model)
+    model.summary()
+
+    #Normalize image size and pixels
+    def get_inputs(src=[]):
+        pre_x = []
+        for s in src:
+            input = cv2.imread(s)
+            input = cv2.resize(input, (224, 224))
+            input = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
+            pre_x.append(input)  # input a image
+        pre_x = np.array(pre_x) / 255.0
+        return pre_x
+
+    # images folder address to be classified, get sub_floders for getting all the images address
+    predict_dir = _folder
+    sub_folders = os.listdir(predict_dir)
+    print("sub_folders",sub_folders)
+
+    #new list saves predicting image address
+    images_address = []
+    images_names = []
+    for sub_folder in sub_folders:
+        for item in os.listdir(os.path.join(predict_dir, sub_folder)):
+            if item.endswith('.png'):
+                item_address = os.path.join(predict_dir, sub_folder, item)
+                print(item_address)
+                images_address.append(item_address)
+                images_names.append(item)
+
+    #call function, normalize picture, predict, only get array, not sure 0.393313 is birch or spruce?
+    pre_x = get_inputs(images_address)
+    pre_y = model.predict(pre_x)
+    print("Num--Images_Names----Predictions")
+    for i in range(len(images_names)):
+        print("{}--{}----{}".format(i, images_names[i],pre_y[i]))  
+    return images_names, pre_y
 
 
 # In[ ]:
