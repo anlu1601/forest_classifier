@@ -18,7 +18,7 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from tree_segmentation.deepforest.keras_retinanet import models
-from keras.utils import multi_gpu_model
+#from keras.utils import multi_gpu_model
 
 from tree_segmentation.deepforest import _ROOT
 

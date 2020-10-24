@@ -156,8 +156,11 @@ class deepforest:
             model (object): A trained keras model
             gpus: number of gpus to parallelize, default to 1
         """
+
+        ddddirrr = r'C:\Users\André\Desktop\master_forest_clas\forest_classifier\tree_segmentation\model\\'
+        #get_model_dir()
         # Download latest model from github release
-        release_tag, self.weights = utilities.use_release(save_dir=get_model_dir())
+        release_tag, self.weights = utilities.use_release(save_dir=ddddirrr)
 
         # load saved model and tag release
         self.__release_version__ = release_tag
@@ -375,6 +378,7 @@ class deepforest:
             else:
                 raise ValueError("No input specified. deepforest.predict_image() requires either a numpy_image array or a path to a file to read.")
 
+        print(image_path)
         #Predict
         prediction = predict.predict_image(self.prediction_model,
                                            image_path=image_path,

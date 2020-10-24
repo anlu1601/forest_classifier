@@ -18,7 +18,7 @@ class TreePredictor:
 
     def __init__(self):
         self.current_model = deepforest.deepforest()
-        self.current_model.use_release()
+        #self.current_model.use_release()
 
     def load_model(self, model):
         """Load another model to be used for prediction/training.
@@ -71,7 +71,8 @@ class TreePredictor:
         print("Predicting trees...")
 
         try:
-            image_path = get_data(image_path)
+            #image_path = get_data(image_path)
+
             bounding_boxes = self.current_model.predict_image(image_path, return_plot=False)
             tree_count = len(bounding_boxes)
 
@@ -85,6 +86,7 @@ class TreePredictor:
                 return 0
 
             json_data = None
+
             tree_img = Image.open(image_path)
 
             if save_json is True:
@@ -140,7 +142,7 @@ class TreePredictor:
         print("Pictures saved:", saved_images)
         return saved_images
 
-    def predict_and_store_trees_from_folder(self, folder_name, save_folder, score_threshold=0, save_json=True):
+    def predict_and_store_trees_from_folder(self, folder_path, save_folder, score_threshold=0, save_json=True):
         """
         @param save_json: Whether to save bounding box data in a json file.
         @param folder_name: Folder of the images to perform prediction.
@@ -155,7 +157,7 @@ class TreePredictor:
 
         picture_count = 0
 
-        folder_path = get_data(folder_name)
+        #folder_path = get_data(folder_name)
         images = len(os.listdir(folder_path))
 
         # Go through all the pictures and save the results
