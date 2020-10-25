@@ -23,7 +23,7 @@ def get_trees_from_random_forest():
     # print(data['image'])
     trees = data['trees']
     # print(data)
-    return data
+    return data, random_forest
 
 # print(trees)
 # print(json.dumps(data, indent = 4, sort_keys=True))

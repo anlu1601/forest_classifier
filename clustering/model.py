@@ -80,6 +80,8 @@ def load_images_from_folder(folder, model):
 
     print("Target size:", target_size)
 
+    img_names = []
+
     for filename in os.listdir(folder):
 
         if filename == "json.txt":
@@ -93,8 +95,9 @@ def load_images_from_folder(folder, model):
 
         if img is not None:
             images.append(img)
+            img_names.append(filename)
 
-    return images
+    return images, img_names
 
 
 # Load a model from specified path
@@ -165,6 +168,7 @@ def get_features(all_imgs_arr, model2):
 # K = Numer of images to take into account, Master Image is the vector to check similarity with, preds are predictions
 def get_nearest_neighbor_and_similarity(predictions, image_count, master_image, save_path, model):
 
+    dims = 1000
     if model == Models.VGG19_MODEL:
         dims = 4096
     elif model == Models.INCEPTION_3:
@@ -187,7 +191,7 @@ def get_nearest_neighbor_and_similarity(predictions, image_count, master_image, 
         t.add_item(i, file_vector)
         i += 1
     t.build(trees)
-    t.save(save_path)
+#    t.save(save_path)
 
     # for i in range(preds.shape[0]):
     for o in predictions:
@@ -288,7 +292,7 @@ def plot_image_cluster(x_coord, y_coord, img_arr, icon_size, folder):
     time.sleep(3600)
 
 
-def run_example_INCEPTION_3(image_folder, model_path, create_new_model=True):
+def run_INCEPTION_3(image_folder, model_path, create_new_model=True):
 
     current_model = Models.INCEPTION_3
 
@@ -298,7 +302,7 @@ def run_example_INCEPTION_3(image_folder, model_path, create_new_model=True):
         base_model = load_model_from_path(model_path, current_model)
 
     print("Loading images..")
-    images_arr = load_images_from_folder(image_folder, base_model)
+    images_arr, img_names = load_images_from_folder(image_folder, base_model)
 
     print("Getting predictions..")
     # Get predictions of images
@@ -308,4 +312,4 @@ def run_example_INCEPTION_3(image_folder, model_path, create_new_model=True):
     # TODO: Is feature needed?
     # feature = get_features(images_arr, base_model)
 
-    return prediction_arr
+    return prediction_arr, img_names

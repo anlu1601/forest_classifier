@@ -1,17 +1,20 @@
 import os
 import cv2
 import shutil
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+import matplotlib
+#import matplotlib.image as mpimg
 import glob
 import math
 import reverse_geocode
-
+matplotlib.use('TKAgg',force=True)
+import matplotlib.pyplot as plt
+from PIL import Image
 
 class tree_data:
-    def __init__(self, data):
+    def __init__(self, data, cluster):
         self.data = data
         self.dest = './labeling/input'
+        self.cluster = cluster
 
     def show_labeled(self, label):
         dirpath = self.dest + '/' + label
@@ -64,6 +67,13 @@ class tree_data:
 
                     im = im + 1
 
+        ########## For PyCharm
+        plt.savefig('labeled.png')
+        imagee = cv2.imread('labeled.png')
+        img = Image.fromarray(imagee, 'RGB')
+        img.show()
+        ###########
+
     def show_forest_cluster(self):
 
         data = self.data
@@ -78,13 +88,22 @@ class tree_data:
 
         # draw rectangles
         for tree in trees:
-            parent_image = cv2.rectangle(parent_image, (tree['x_min'], tree['y_min']), (tree['x_max'], tree['y_max']),
+            for im in self.cluster:
+                treee = tree['tree_name'] + ".png"
+                #print(im, " == ", treee)
+                if im == treee:
+                    parent_image = cv2.rectangle(parent_image, (tree['x_min'], tree['y_min']), (tree['x_max'], tree['y_max']),
                                          color, 5)
 
         plt.figure(figsize=(12, 8))
         plt.axis('off')
         plt.imshow(parent_image, aspect='auto')
-        plt.show()
+        #plt.show()
+
+        ###### For PyCharm
+        img = Image.fromarray(parent_image, 'RGB')
+        img.show()
+        #########
 
     def set_label(self, species):
         if (species == "skip"):

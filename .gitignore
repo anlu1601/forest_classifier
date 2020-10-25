@@ -1,2 +1,5 @@
 /venv/
 *.h5
+*.pb
+/clustering/assets
+/clustering/variables
