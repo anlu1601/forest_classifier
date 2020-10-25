@@ -2,9 +2,10 @@ from clustering.functions import cluster_and_plot
 from folders import get_tso, get_tsd
 from gui.plot_image import plot_trees_and_select
 from tree_segmentation.tree_predictor import TreePredictor
-import labeling.cnn as cnn
 import interaction.user_interaction as interact
 import interaction.import_trees as imp_trees
+import labeling.choose_model as cm
+
 
 if __name__ == '__main__':
     # PREDICT AND SAVE TREES, SEGMENTATION
@@ -17,18 +18,14 @@ if __name__ == '__main__':
 
     # Cluster and show trees
     #cluster_and_plot(x_1, x_2, y_1, y_2)
-    data = imp_trees.get_trees_from_random_forest()
-    forest_cluster = interact.tree_data(data)
-    forest_cluster.show_location()
-    forest_cluster.show_forest_cluster()
+    #data = imp_trees.get_trees_from_random_forest()
+    #forest_cluster = interact.tree_data(data)
+    #forest_cluster.show_location()
+    #forest_cluster.show_forest_cluster()
     #forest_cluster.set_label('TestLabel')
 
-
-    #CLASSIFICATION & PREDICTION OF SPECIES
-
-    #model = cnn.two_layer_cnn()
-    #model.train_and_eval()
-    #model.create_predictions()
+    # Can be 'Inception' or 'cnn'
+    cm.run_classifier('Inception')
 
 
 

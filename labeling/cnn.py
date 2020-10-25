@@ -52,7 +52,7 @@ class two_layer_cnn:
                                  std=[0.5, 0.5, 0.5])
         ])
 
-        #shutil.rmtree(r".\labeling\divided_output")
+        shutil.rmtree(r".\labeling\divided_output")
 
         splitfolders.ratio(r".\labeling\input", output = r".\labeling\divided_output", seed=1337, ratio=(.7, .3),
                            group_prefix=None)
@@ -238,7 +238,7 @@ class two_layer_cnn:
         # print(out)
         df = pd.DataFrame(out, columns=column_names)
         # print(df)
-        df.to_csv('prediction_list_1.csv', index=False)
+        df.to_csv('prediction_list_cnn.csv', index=False)
 
 
 
