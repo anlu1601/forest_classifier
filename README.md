@@ -12,7 +12,8 @@ cd forest_classifier
 conda env create --file=environment.yml
 conda activate forest_classifier
 #build c extentions for retinanet
-python ./tree_segmentation/setup.py build_ext --inplace
+cd ./tree_segmentation
+python setup.py build_ext --inplace
 ```
 
 
