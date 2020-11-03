@@ -6,7 +6,7 @@ import matplotlib
 import glob
 import math
 import reverse_geocode
-matplotlib.use('TKAgg',force=True)
+#matplotlib.use('TKAgg',force=True)
 import matplotlib.pyplot as plt
 from PIL import Image
 
@@ -68,10 +68,10 @@ class tree_data:
                     im = im + 1
 
         ########## For PyCharm
-        plt.savefig('labeled.png')
-        imagee = cv2.imread('labeled.png')
-        img = Image.fromarray(imagee, 'RGB')
-        img.show()
+        #plt.savefig('labeled.png')
+        #imagee = cv2.imread('labeled.png')
+        #img = Image.fromarray(imagee, 'RGB')
+        #img.show()
         ###########
 
     def show_forest_cluster(self):
@@ -98,11 +98,11 @@ class tree_data:
         plt.figure(figsize=(12, 8))
         plt.axis('off')
         plt.imshow(parent_image, aspect='auto')
-        #plt.show()
+        plt.show()
 
         ###### For PyCharm
-        img = Image.fromarray(parent_image, 'RGB')
-        img.show()
+        #img = Image.fromarray(parent_image, 'RGB')
+        #img.show()
         #########
 
     def set_label(self, species):
@@ -128,10 +128,13 @@ class tree_data:
 
         # copy tree to labels
         for tree in trees:
-            from_path = './tree_segmentation/output/' + forest_image + '/' + tree['tree_name'] + '.png'
-            to_path = path + '/' + tree['tree_name'] + '.png'
-            # print(from_path, to_path)
-            shutil.copy(from_path, to_path)
+            for im in self.cluster:
+                treee = tree['tree_name'] + '.png'
+                if im == treee:
+                    from_path = './tree_segmentation/output/' + forest_image + '/' + tree['tree_name'] + '.png'
+                    to_path = path + '/' + tree['tree_name'] + '.png'
+                    # print(from_path, to_path)
+                    shutil.copy(from_path, to_path)
 
         print('Moved trees to label ' + species)
 
